@@ -12,7 +12,7 @@ import osmnx as ox
 import geopandas as gpd
 
 def build_network(place_name="Thurston County, Washington, USA"):
-    print("🔹 Downloading OSM road network for:", place_name)
+    print("Downloading OSM road network for:", place_name)
     # Get drivable road network
     G = ox.graph_from_place(place_name, network_type="drive")
 
@@ -21,12 +21,12 @@ def build_network(place_name="Thurston County, Washington, USA"):
         if "length" in data:
             data["travel_time"] = data["length"] / (50 * 1000 / 3600)
 
-    print("✅ Road network built with", len(G.edges), "edges.")
+    print("Road network built with", len(G.edges), "edges.")
     return G
 
 def flag_flooded_edges(G, flood_polygon_path="outputs/flood_extent.gpkg"):
     if not os.path.exists(flood_polygon_path):
-        print("⚠️ Flood extent file not found, skipping flood marking.")
+        print("Flood extent file not found, skipping flood marking.")
         return G
 
     flood_zones = gpd.read_file(flood_polygon_path)
@@ -39,7 +39,7 @@ def flag_flooded_edges(G, flood_polygon_path="outputs/flood_extent.gpkg"):
     for u, v, k, data in G.edges(keys=True, data=True):
         data["flooded"] = (data.get("osmid") in flooded_ids)
 
-    print(f"🚧 Flagged {len(flooded_ids)} flooded road segments.")
+    print(f"Flagged {len(flooded_ids)} flooded road segments.")
     return G
 
 def export_graph(G, out_path="outputs/road_network.graphml"):
